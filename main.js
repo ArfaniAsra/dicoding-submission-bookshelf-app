@@ -6,7 +6,11 @@ const currentYear = new Date().getFullYear();
 
 const isStorageExist = () => {
     if (typeof Storage === undefined) {
-        alert("Browser Anda tidak mendukung local storage");
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Browser Anda tidak mendukung local storage",
+        });
         return false;
     }
     return true;
@@ -50,6 +54,12 @@ const addBook = () => {
     );
     bookshelf.push(bookObject);
 
+    Swal.fire({
+        icon: "success",
+        title: "Data berhasil disimpan!",
+        showConfirmButton: false,
+        timer: 1500,
+    });
     document.dispatchEvent(new Event(RENDER_EVENT));
     saveData();
 };
@@ -100,12 +110,10 @@ const displayBooks = (bookObject) => {
     bookContainer.appendChild(buttonContainer);
 
     completeButton.addEventListener("click", () => {
-        bookObject.isComplete
-            ? undoFromCompleteBooks(bookObject.id)
-            : moveToCompleteBooks(bookObject.id);
+        moveBooks(bookObject.id, !bookObject.isComplete);
     });
 
-    deleteButton.addEventListener("click", () => removeBook(bookObject.id));
+    deleteButton.addEventListener("click", () => deleteBook(bookObject.id));
     editButton.addEventListener("click", () => editBook(bookObject.id));
 
     return bookContainer;
@@ -134,31 +142,39 @@ const searchBook = (event) => {
     });
 };
 
-const moveToCompleteBooks = (bookId) => {
+const moveBooks = (bookId, isComplete) => {
     const bookTarget = findBook(bookId);
     if (!bookTarget) return;
 
-    bookTarget.isComplete = true;
+    bookTarget.isComplete = isComplete;
     document.dispatchEvent(new Event(RENDER_EVENT));
     saveData();
 };
 
-const undoFromCompleteBooks = (bookId) => {
-    const bookTarget = findBook(bookId);
-    if (!bookTarget) return;
-
-    bookTarget.isComplete = false;
-    document.dispatchEvent(new Event(RENDER_EVENT));
-    saveData();
-};
-
-const removeBook = (bookId) => {
+const deleteBook = (bookId) => {
     const bookIndex = findBookIndex(bookId);
     if (bookIndex === -1) return;
 
     bookshelf.splice(bookIndex, 1);
-    document.dispatchEvent(new Event(RENDER_EVENT));
-    saveData();
+    Swal.fire({
+        title: "Anda yakin?",
+        text: "Anda tidak akan dapat mengembalikannya!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Ya, hapus!",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Swal.fire({
+                title: "Terhapus!",
+                text: "Buku berhasil dihapus.",
+                icon: "success",
+            });
+            saveData();
+            document.dispatchEvent(new Event(RENDER_EVENT));
+        }
+    });
 };
 
 const findBook = (bookId) =>
@@ -207,10 +223,23 @@ const editBook = (bookId) => {
         bookTarget.author = author;
         bookTarget.year = year;
 
-        saveData();
-        document.dispatchEvent(new Event(RENDER_EVENT));
+        Swal.fire({
+            title: "Anda ingin menyimpan perubahan?",
+            showDenyButton: true,
+            showCancelButton: true,
+            confirmButtonText: "Simpan",
+            denyButtonText: `Tidak`,
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                Swal.fire("Tersimpan!", "", "success");
+                saveData();
+                document.dispatchEvent(new Event(RENDER_EVENT));
+            } else if (result.isDenied) {
+                Swal.fire("Perubahan tidak disimpan", "", "info");
+            }
+        });
 
-        document.getElementById("editBookForm").reset();
         document.getElementById("editBookContainer").classList.remove("active");
         document.querySelector(".modal-overlay").classList.remove("show");
     });
@@ -239,10 +268,6 @@ document.addEventListener(RENDER_EVENT, () => {
     });
 });
 
-document.addEventListener(SAVED_EVENT, () => {
-    console.log(localStorage.getItem(STORAGE_KEY));
-});
-
 document.getElementById("addBookButton").addEventListener("click", () => {
     document.querySelector(".add-book").classList.add("show");
     document.querySelector(".modal-overlay").classList.add("show");
@@ -255,9 +280,7 @@ document.querySelector(".modal-overlay").addEventListener("click", () => {
         addBookModal.classList.remove("show");
         document.querySelector(".modal-overlay").classList.remove("show");
     }
-    // Do nothing if editBookContainer is active
 });
-
 
 document.querySelector(".close-modal").addEventListener("click", () => {
     document.querySelector(".add-book").classList.remove("show");
@@ -329,3 +352,8 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 document.getElementById("searchBook").addEventListener("submit", searchBook);
+
+// Remove Later
+document.addEventListener(SAVED_EVENT, () => {
+    console.log(localStorage.getItem(STORAGE_KEY));
+});
