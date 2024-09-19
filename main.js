@@ -1,9 +1,18 @@
+/*
+{
+  id: string | number,
+  title: string,
+  author: string,
+  year: number,
+  isComplete: boolean,
+}
+  */
+
+/* Kumpulan Konstanta */
 const bookshelf = [];
 const RENDER_EVENT = "render-book";
 const SAVED_EVENT = "saved-book";
 const STORAGE_KEY = "BOOKSHELF_APP";
-
-// Konstanta untuk selektor
 const SELECTORS = {
     bookFormTitle: "bookFormTitle",
     bookFormAuthor: "bookFormAuthor",
@@ -25,7 +34,7 @@ const SELECTORS = {
     searchBookTitle: "searchBookTitle",
 };
 
-// Fungsi utilitas
+/* Fungsi utilitas */
 const createElement = (tag, attributes = {}, ...children) => {
     const element = document.createElement(tag);
     for (const [key, value] of Object.entries(attributes)) {
@@ -42,6 +51,16 @@ const createElement = (tag, attributes = {}, ...children) => {
 };
 
 const showAlert = (options) => Swal.fire(options);
+
+const showConfirmationAlert = (options, onConfirm, onDeny) => {
+    Swal.fire(options).then((result) => {
+        if (result.isConfirmed) {
+            onConfirm();
+        } else if (result.isDenied) {
+            onDeny();
+        }
+    });
+};
 
 const closeModal = () => {
     document
@@ -81,7 +100,7 @@ const createErrorMessage = (inputElement, message) => {
     return errorMessage;
 };
 
-// Function to sanitize input
+// Fungsi untuk Membersihkan Input
 const sanitizeInput = (input) => {
     const element = document.createElement("div");
     element.innerHTML = input;
@@ -91,31 +110,22 @@ const sanitizeInput = (input) => {
     );
 };
 
-
-// Fungsi penyimpanan dan pemuatan data
-
-const validateTitleInput = (titleInput) => {
-    if (!titleInput.value.trim()) {
-        createErrorMessage(titleInput, "Judul buku wajib diisi!");
+// Fungsi untuk Validasi Input
+const validateInput = (inputElement, message) => {
+    if (!inputElement.value.trim()) {
+        createErrorMessage(inputElement, message);
     } else {
-        const errorMessage = titleInput.nextElementSibling;
+        const errorMessage = inputElement.nextElementSibling;
         if (errorMessage && errorMessage.tagName === "SPAN") {
             errorMessage.style.display = "none";
         }
     }
 };
 
-const validateAuthorInput = (authorInput) => {
-    if (!authorInput.value.trim()) {
-        createErrorMessage(authorInput, "Nama Penulis wajib diisi!");
-    } else {
-        const errorMessage = authorInput.nextElementSibling;
-        if (errorMessage && errorMessage.tagName === "SPAN") {
-            errorMessage.style.display = "none";
-        }
-    }
-};
-
+const validateTitleInput = (titleInput) =>
+    validateInput(titleInput, "Judul buku wajib diisi!");
+const validateAuthorInput = (authorInput) =>
+    validateInput(authorInput, "Nama Penulis wajib diisi!");
 const validateYearInput = (yearInput) => {
     const currentYear = new Date().getFullYear();
     const yearValue = parseInt(yearInput.value, 10);
@@ -132,6 +142,14 @@ const validateYearInput = (yearInput) => {
     }
 };
 
+const findBook = (bookId) =>
+    bookshelf.find((book) => book.id === bookId) || null;
+
+const findBookIndex = (bookId) =>
+    bookshelf.findIndex((book) => book.id === bookId);
+
+
+/* Kriteria Wajib 1: Gunakan localStorage sebagai Penyimpanan */
 const isStorageExist = () => {
     if (typeof Storage === undefined) {
         showAlert({
@@ -167,6 +185,8 @@ const generateBookObject = (id, title, author, year, isComplete) => ({
     isComplete,
 });
 
+
+/* Kriteria Wajib 2: Mampu Menambahkan Buku */
 const addBook = () => {
     const bookTitle = document.getElementById(SELECTORS.bookFormTitle).value;
     const bookAuthor = document.getElementById(SELECTORS.bookFormAuthor).value;
@@ -194,6 +214,8 @@ const addBook = () => {
     saveData();
 };
 
+
+/* Kriteria Wajib 3: Memiliki Dua Rak Buku */
 const displayBooks = (bookObject) => {
     const bookItemTitle = createElement(
         "h3",
@@ -269,6 +291,56 @@ const displayBooks = (bookObject) => {
     return bookContainer;
 };
 
+
+/* Kriteria Wajib 4: Dapat Memindahkan Buku Antar Rak */
+const moveBooks = (bookId, isComplete) => {
+    const bookTarget = findBook(bookId);
+    if (!bookTarget) return;
+
+    bookTarget.isComplete = isComplete;
+    document.dispatchEvent(new Event(RENDER_EVENT));
+    saveData();
+};
+
+
+/* Kriteria Wajib 5: Dapat Menghapus Data Buku */
+const deleteBook = (bookId) => {
+    const bookIndex = findBookIndex(bookId);
+    if (bookIndex === -1) return;
+
+    showConfirmationAlert(
+        {
+            title: "Anda yakin?",
+            text: "Anda tidak akan dapat mengembalikannya!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Hapus",
+            cancelButtonText: "Tidak",
+        },
+        () => {
+            bookshelf.splice(bookIndex, 1);
+            showAlert({
+                title: "Terhapus!",
+                text: "Buku berhasil dihapus.",
+                icon: "success",
+            });
+            saveData();
+            document.dispatchEvent(new Event(RENDER_EVENT));
+        },
+        () => {
+            showAlert({
+                title: "Dibatalkan",
+                text: "Buku tidak jadi dihapus.",
+                icon: "info",
+            });
+        }
+    );
+};
+
+
+/* Kriteria Opsional 1: Menambahkan Fitur Pencarian Buku */
 const searchBook = (event) => {
     event.preventDefault();
     const searchTitle = document
@@ -296,55 +368,15 @@ const searchBook = (event) => {
     });
 };
 
-const moveBooks = (bookId, isComplete) => {
-    const bookTarget = findBook(bookId);
-    if (!bookTarget) return;
 
-    bookTarget.isComplete = isComplete;
-    document.dispatchEvent(new Event(RENDER_EVENT));
-    saveData();
-};
-
-const deleteBook = (bookId) => {
-    const bookIndex = findBookIndex(bookId);
-    if (bookIndex === -1) return;
-
-    bookshelf.splice(bookIndex, 1);
-    showAlert({
-        title: "Anda yakin?",
-        text: "Anda tidak akan dapat mengembalikannya!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Hapus!",
-        cancelButtonText: "Tidak",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            showAlert({
-                title: "Terhapus!",
-                text: "Buku berhasil dihapus.",
-                icon: "success",
-            });
-            saveData();
-            document.dispatchEvent(new Event(RENDER_EVENT));
-        }
-    });
-};
-
-const findBook = (bookId) =>
-    bookshelf.find((book) => book.id === bookId) || null;
-
-const findBookIndex = (bookId) =>
-    bookshelf.findIndex((book) => book.id === bookId);
-
+/* Kriteria Opsional 2: Menambahkan Fitur Edit Buku */
 const editBook = (bookId) => {
     const bookTarget = findBook(bookId);
     if (!bookTarget) return;
 
-    const titleInput = document.getElementById("editBookFormTitle");
-    const authorInput = document.getElementById("editBookFormAuthor");
-    const yearInput = document.getElementById("editBookFormYear");
+    const titleInput = document.getElementById(SELECTORS.editBookFormTitle);
+    const authorInput = document.getElementById(SELECTORS.editBookFormAuthor);
+    const yearInput = document.getElementById(SELECTORS.editBookFormYear);
 
     // Set values to the form inputs
     titleInput.value = bookTarget.title;
@@ -383,20 +415,28 @@ const editBook = (bookId) => {
         bookTarget.author = authorInput.value.trim();
         bookTarget.year = yearInput.value.trim();
 
-        Swal.fire({
-            title: "Anda ingin menyimpan perubahan?",
-            showDenyButton: true,
-            confirmButtonText: "Simpan",
-            denyButtonText: `Tidak`,
-        }).then((result) => {
-            if (result.isConfirmed) {
-                Swal.fire("Tersimpan!", "", "success");
+        showConfirmationAlert(
+            {
+                title: "Anda ingin menyimpan perubahan?",
+                showDenyButton: true,
+                confirmButtonText: "Simpan",
+                denyButtonText: `Tidak`,
+            },
+            () => {
+                showAlert({
+                    title: "Tersimpan!",
+                    icon: "success",
+                });
                 saveData();
                 document.dispatchEvent(new Event(RENDER_EVENT));
-            } else if (result.isDenied) {
-                Swal.fire("Perubahan tidak disimpan", "", "info");
+            },
+            () => {
+                showAlert({
+                    title: "Perubahan tidak disimpan",
+                    icon: "info",
+                });
             }
-        });
+        );
 
         closeModal();
     });
@@ -429,16 +469,18 @@ document.addEventListener(RENDER_EVENT, () => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-    const addBookButton = document.getElementById("addBookButton");
-    const modalOverlay = document.querySelector(".modal-overlay");
-    const addBookModal = document.querySelector(".add-book");
-    const closeModalButton = document.querySelector(".close-modal");
-    const submitForm = document.getElementById("bookForm");
-    const yearInput = document.getElementById("bookFormYear");
-    const titleInput = document.getElementById("bookFormTitle");
-    const authorInput = document.getElementById("bookFormAuthor");
-    const editBookContainer = document.getElementById("editBookContainer");
-    const searchBookForm = document.getElementById("searchBook");
+    const addBookButton = document.getElementById(SELECTORS.addBookButton);
+    const modalOverlay = document.querySelector(`.${SELECTORS.modalOverlay}`);
+    const addBookModal = document.querySelector(`.${SELECTORS.addBookModal}`);
+    const closeModalButton = document.querySelector(`.${SELECTORS.closeModal}`);
+    const submitForm = document.getElementById(SELECTORS.bookForm);
+    const yearInput = document.getElementById(SELECTORS.bookFormYear);
+    const titleInput = document.getElementById(SELECTORS.bookFormTitle);
+    const authorInput = document.getElementById(SELECTORS.bookFormAuthor);
+    const editBookContainer = document.getElementById(
+        SELECTORS.editBookContainer
+    );
+    const searchBookForm = document.getElementById(SELECTORS.searchBook);
 
     // Event listener to show add book modal
     addBookButton.addEventListener("click", () => {
