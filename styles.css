@@ -264,6 +264,7 @@ main {
     border-radius: 50px;
     background-color: var(--secondary-color);
     text-align: center;
+    font-weight: 600;
 }
 
 .modal {
