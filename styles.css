@@ -1,9 +1,8 @@
-CSS Reset
+/* CSS Reset */
 /* http://meyerweb.com/eric/tools/css/reset/ 
     v2.0 | 20110126
     License: none (public domain)
 */
-
 html,
 body,
 div,
@@ -92,6 +91,7 @@ video {
     font: inherit;
     vertical-align: baseline;
 }
+
 /* HTML5 display-role reset for older browsers */
 article,
 aside,
@@ -106,17 +106,21 @@ nav,
 section {
     display: block;
 }
+
 body {
     line-height: 1;
 }
+
 ol,
 ul {
     list-style: none;
 }
+
 blockquote,
 q {
     quotes: none;
 }
+
 blockquote:before,
 blockquote:after,
 q:before,
@@ -124,6 +128,7 @@ q:after {
     content: "";
     content: none;
 }
+
 table {
     border-collapse: collapse;
     border-spacing: 0;
@@ -132,33 +137,67 @@ table {
 
 /* Global styles */
 :root {
-    --primary-color: #4a90e2;
-    --secondary-color: #50e3c2;
-    --accent-color: #ff5a5f;
-    --background-color: #f5f7fa;
-    --text-color: #333333;
+    /* Color Variables */
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --accent-color: #28a745;
+    --background-color: #f8f9fa;
+    --text-color-dark: #343a40;
+    --text-color-light: #ffffff;
     --container-color: #ffffff;
+    --border-color-light: #dee2e6;
+    --border-color-dark: #343a40;
+    --border-color-medium: #ced4da;
+    --shadow-color: rgba(0, 0, 0, 0.15);
+    --overlay-color: rgba(0, 0, 0, 0.5);
+    --hover-color: rgba(0, 0, 0, 0.1);
+
+    /* Button Colors */
+    --button-color-primary: #007bff;
+    --button-color-primary-hover: #0056b3;
+    --button-color-complete: #28a745;
+    --button-color-complete-hover: #218838;
+    --button-color-delete: #dc3545;
+    --button-color-delete-hover: #c82333;
+    --button-color-edit: #ffc107;
+    --button-color-edit-hover: #e0a800;
+    --button-color-save: #28a745;
+    --button-color-save-hover: #218838;
+
+    /* Typography Variables */
+    --font-family-base: "Roboto", sans-serif;
+    --font-size-base: 16px;
+    --font-size-small: 14px;
+    --font-size-large: 18px;
+    --font-size-h1: 2rem;
+    --font-size-h2: 1.5rem;
+    --font-size-h3: 1.25rem;
+    --font-weight-normal: 400;
+    --font-weight-bold: 700;
+    --line-height-base: 1.6;
+    --letter-spacing-base: 0.05rem;
 }
 
 * {
     box-sizing: border-box;
+    scroll-behavior: smooth;
 }
 
 body {
-    font-family: "Roboto", sans-serif;
-    min-height: 100%;
-    line-height: 1.6;
-    letter-spacing: 0.05rem;
+    font-family: var(--font-family-base);
+    font-size: var(--font-size-base);
+    line-height: var(--line-height-base);
+    letter-spacing: var(--letter-spacing-base);
     background-color: var(--background-color);
 }
 
-/* Navbar */
+/* Header */
 header {
     background-color: var(--primary-color);
     width: 100%;
     position: fixed;
     color: white;
-    padding: 20px 0;
+    padding: 10px 0;
     display: flex;
     justify-content: center;
     top: 0;
@@ -167,60 +206,65 @@ header {
 }
 
 h1 {
-    font-size: 2rem;
-    font-weight: 700;
-    letter-spacing: 0.1rem;
+    font-size: var(--font-size-h1);
+    font-weight: var(--font-weight-bold);
+    letter-spacing: var(--letter-spacing-base);
 }
-/* End of Navbar */
+/* End of Header */
 
 /* Main */
 h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: var(--text-color);
+    font-size: var(--font-size-h2);
+    font-weight: var(--font-weight-bold);
+    color: var(--text-color-dark);
     margin: 20px 0;
 }
 
 p {
-    font-size: 1rem;
-    color: var(--text-color);
+    font-size: var(--font-size-base);
+    color: var(--text-color-dark);
     margin: 10px 0;
 }
 
 main {
     display: flex;
-    width: 90%;
-    margin: 0 auto;
-    margin-top: 120px;
+    flex-wrap: wrap;
+    width: 80%;
+    margin: auto;
+}
+
+#home {
+    height: 120px;
 }
 
 .first-column {
-    flex: 1;
-    padding: 0 50px;
+    display: flex;
+    align-items: center;
+    width: 80%;
+    gap: 50px;
+    margin: auto;
 }
 
 .second-column {
-    flex: 2;
-    margin: 20px 50px;
+    display: flex;
+    flex-direction: column;
+    margin: 20px auto;
 }
 
 .second-column section {
-    padding: 20px;
-    margin: 50px 0;
-    border: 1px solid #000;
-    border-radius: 8px;
+    padding: 20px 40px;
+    margin: 25px auto;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px var(--shadow-color), 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-.second-column section h2 {
+.second-column h2 {
     text-align: center;
-}
-
-.second-column section:nth-of-type(1) {
-    margin-top: 0;
 }
 
 /* Search Book Section */
 .search-book {
+    flex: 3;
     width: 100%;
     padding: 20px 0;
 }
@@ -232,17 +276,17 @@ main {
 .search-book input {
     flex: 2;
     padding: 10px 20px;
-    font-size: 1.2rem;
-    border: 1px solid #ddd;
+    font-size: var(--font-size-large);
+    border: 1px solid var(--border-color-light);
     border-radius: 50px 0 0 50px;
     outline: none;
 }
 
 .search-book button {
     padding: 10px 20px;
-    font-size: 1.2rem;
+    font-size: var(--font-size-large);
     border: none;
-    background-color: #ff6b6b;
+    background-color: var(--secondary-color);
     color: white;
     border-radius: 0 50px 50px 0;
     cursor: pointer;
@@ -250,21 +294,37 @@ main {
 }
 
 .search-book button:hover {
-    background-color: #ff4d4d;
+    background-color: var(--primary-color);
 }
 /* End of Search Book Section */
 
-/* Big Button */
+/* Add Button */
 .add-button {
-    width: 60%;
-    font-size: 1.5em;
-    padding: 10px 20px;
-    margin: 40px auto;
+    flex: 1;
+    width: 100%;
+    padding: 15px 25px;
+    font-size: var(--font-size-large);
     cursor: pointer;
     border-radius: 50px;
     background-color: var(--secondary-color);
+    color: var(--text-color-light);
     text-align: center;
-    font-weight: 600;
+    font-weight: var(--font-weight-bold);
+    margin: 20px auto;
+    transition: background-color 0.3s ease, transform 0.3s ease,
+        box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.add-button:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.add-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .modal {
@@ -273,9 +333,9 @@ main {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: white;
+    background-color: var(--container-color);
     padding: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 5px 15px var(--shadow-color);
     z-index: 1000;
 }
 
@@ -286,25 +346,22 @@ main {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: var(--overlay-color);
     z-index: 999;
 }
 
-.modal.show {
-    display: block;
-}
-
+.modal.show,
 .modal-overlay.show {
     display: block;
 }
-/* End of Big Button */
+/* End of Add Button */
 
 /* Form to Add Book */
 .add-book {
     background-color: var(--container-color);
     padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px var(--shadow-color);
     margin: 20px;
     max-width: 600px;
     width: 80%;
@@ -331,18 +388,17 @@ main {
 }
 
 .add-book label {
-    /* display: flex; */
-    font-size: 1rem;
-    font-weight: 400;
+    font-size: var(--font-size-base);
+    font-weight: var(--font-weight-normal);
     margin-bottom: 5px;
     text-align: left;
 }
 
 .add-book input {
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-color-medium);
     border-radius: 5px;
-    font-size: 1rem;
+    font-size: var(--font-size-base);
     width: 100%;
     box-sizing: border-box;
 }
@@ -350,7 +406,7 @@ main {
 .add-book input:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 5px var(--shadow-color);
 }
 
 .add-book input[type="checkbox"] {
@@ -364,31 +420,54 @@ main {
     color: var(--container-color);
     border: none;
     border-radius: 5px;
-    font-size: 1rem;
+    font-size: var(--font-size-base);
     cursor: pointer;
     transition: background-color 0.3s;
 }
 
 .add-book button:hover {
-    opacity: 0.6; /* Adjust the opacity to 80% */
-    color: darken(var(--secondary-color), 100%);
+    opacity: 0.6;
 }
 
 .add-book span {
-    font-weight: 600;
+    font-weight: var(--font-weight-bold);
 }
 /* End of Form to Add Book */
 
+.book-list-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
 .book-item {
-    margin: 20px 0;
-    padding: 20px;
-    border: 1px solid #333;
-    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    justify-content: space-between;
+    transition: transform 0.3s ease;
+}
+
+.book-item:hover {
+    transform: translateY(-10px);
+}
+
+.book-cover {
+    width: 100%;
+    height: auto;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.book-content {
+    padding: 40px 20px 0 20px;
 }
 
 .book-item h3 {
-    font-size: 1.5rem;
-    font-weight: 600;
+    font-size: var(--font-size-h3);
+    font-weight: var(--font-weight-bold);
 }
 
 .book-item p {
@@ -396,75 +475,82 @@ main {
 }
 
 .button-container {
+    bottom: 0;
     display: flex;
-    justify-content: flex-end;
-    align-items: flex-end;
-    gap: 10px;
+    justify-content: center;
+    padding: 10px 0;
 }
 
 .button-style {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 5px;
+    display: flex;
+    flex-direction: column;
+    padding: 10px 15px;
+    margin: 10px;
     color: white;
     text-align: center;
     border-radius: 5px;
     cursor: pointer;
     user-select: none;
+    transition: background-color 0.3s ease, transform 0.3s ease,
+        box-shadow 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button-style:hover {
+    background-color: var(--primary-color);
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.button-style:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button-style:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--primary-color);
 }
 
 .button-complete {
-    background-color: #28a745;
-    color: white;
+    background-color: var(--button-color-complete);
 }
 
 .button-complete:hover {
-    background-color: #218838;
+    background-color: var(--button-color-complete-hover);
 }
 
 .button-delete {
-    background-color: #dc3545;
-    color: white;
+    background-color: var(--button-color-delete);
 }
 
 .button-delete:hover {
-    background-color: #c82333;
+    background-color: var(--button-color-delete-hover);
 }
 
 .button-edit {
-    background-color: #ffc107;
+    background-color: var(--button-color-edit);
     color: black;
 }
 
 .button-edit:hover {
-    background-color: #e0a800;
+    background-color: var(--button-color-edit-hover);
 }
-
 /* End of Main */
 
 /* Style for the modal form (popup) */
-#modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    z-index: 999;
-    display: none;
-}
-
 #editBookContainer {
     display: none; /* Initially hidden */
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #fff;
+    background-color: var(--container-color);
     padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px var(--shadow-color);
     z-index: 1000;
-    width: 400px;
+    max-width: 600px;
+    width: 80%;
     border-radius: 8px;
 }
 
@@ -474,24 +560,6 @@ main {
 
 #editBookContainer h2 {
     text-align: center;
-}
-
-.popup-content div {
-    margin-bottom: 15px;
-}
-
-#editBookFormSubmit {
-    width: 100%;
-    padding: 10px;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#editBookFormSubmit:hover {
-    background-color: #45a049;
 }
 
 .close-modal {
@@ -507,11 +575,124 @@ main {
 }
 
 .close-modal:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: var(--hover-color);
+}
+
+/* Scroll TO Top Button CSS */
+.scroll-button a {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    color: var(--text-color-light);
+    background: var(--primary-color);
+    padding: 7px 12px;
+    font-size: 18px;
+    border-radius: 6px;
+    box-shadow: rgba(0, 0, 0, 0.15);
+    display: none;
+}
+
+/* Responsiveness */
+@media (max-width: 1200px) {
+    main,
+    .first-column,
+    .second-column {
+        width: 100%;
+    }
+    .first-column,
+    .second-column {
+        width: 90%;
+    }
+    .second-column section {
+        padding: 15px 30px;
+    }
+    .book-item {
+        flex: 0 1 calc(33.333% - 25px);
+    }
+}
+
+@media (max-width: 992px) {
+    .first-column {
+        flex-direction: column;
+        gap: 20px;
+    }
+    .second-column,
+    .add-book {
+        width: 90%;
+    }
+    .second-column section {
+        padding: 10px 20px;
+    }
+    .add-button {
+        width: 50%;
+        font-size: var(--font-size-base);
+    }
+    .book-list-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .book-item {
+        flex: 0 1 calc(50% - 25px);
+    }
 }
 
 @media (max-width: 768px) {
+    header {
+        padding: 15px 0;
+    }
+    h1 {
+        font-size: 1.75rem;
+    }
+    .first-column,
+    .second-column,
+    .search-book {
+        width: 90%;
+    }
+    .second-column section {
+        padding: 10px 15px;
+    }
+    .add-book {
+        width: 95%;
+    }
+    .book-list-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .book-item {
+        flex: 0 1 calc(50% - 25px);
+    }
+}
+
+@media (max-width: 576px) {
+    header {
+        padding: 10px 0;
+    }
+    h1 {
+        font-size: 1.5rem;
+    }
     main {
+        width: 100%;
+        margin: 100px auto;
+    }
+    .second-column section {
+        padding: 5px 10px;
+    }
+    .add-book {
+        width: 100%;
+    }
+    .book-list-container {
         flex-direction: column;
+    }
+    .book-item {
+        flex: 0 1 100%;
+    }
+    .search-book {
+        width: 90%;
+    }
+    .search-book input,
+    .search-book button,
+    .add-button {
+        font-size: var(--font-size-base);
+    }
+    .add-button {
+        width: 50%;
     }
 }

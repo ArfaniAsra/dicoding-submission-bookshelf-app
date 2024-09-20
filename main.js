@@ -148,7 +148,6 @@ const findBook = (bookId) =>
 const findBookIndex = (bookId) =>
     bookshelf.findIndex((book) => book.id === bookId);
 
-
 /* Kriteria Wajib 1: Gunakan localStorage sebagai Penyimpanan */
 const isStorageExist = () => {
     if (typeof Storage === undefined) {
@@ -185,7 +184,6 @@ const generateBookObject = (id, title, author, year, isComplete) => ({
     isComplete,
 });
 
-
 /* Kriteria Wajib 2: Mampu Menambahkan Buku */
 const addBook = () => {
     const bookTitle = document.getElementById(SELECTORS.bookFormTitle).value;
@@ -214,9 +212,13 @@ const addBook = () => {
     saveData();
 };
 
-
 /* Kriteria Wajib 3: Memiliki Dua Rak Buku */
 const displayBooks = (bookObject) => {
+    const bookImage = createElement("img", {
+        src: "img/daria-nepriakhina-xY55bL5mZAM-unsplash.jpg",
+        alt: "Book Cover",
+        class: "book-cover",
+    });
     const bookItemTitle = createElement(
         "h3",
         { "data-testid": "bookItemTitle" },
@@ -233,32 +235,45 @@ const displayBooks = (bookObject) => {
         `Tahun: ${bookObject.year}`
     );
 
-    const completeButton = createElement(
+    const bookContentContainer = createElement(
         "div",
-        {
-            class: "button-style button-complete",
-            "data-testid": "bookItemIsCompleteButton",
-        },
-        bookObject.isComplete ? "Belum selesai dibaca" : "Selesai dibaca"
+        { class: "book-content" },
+        bookItemTitle,
+        bookItemAuthor,
+        bookItemYear
     );
 
-    const deleteButton = createElement(
-        "div",
-        {
-            class: "button-style button-delete",
-            "data-testid": "bookItemDeleteButton",
-        },
-        "Hapus Buku"
+    const completeIcon = createElement("i", {
+        class: bookObject.isComplete ? "fas fa-undo" : "fas fa-check",
+    });
+    const completeButton = createElement("div", {
+        class: "button-style button-complete",
+        "data-testid": "bookItemIsCompleteButton",
+    });
+    completeButton.appendChild(completeIcon);
+    completeButton.appendChild(
+        document.createTextNode(bookObject.isComplete ? "Belum" : "Sudah")
     );
 
-    const editButton = createElement(
-        "div",
-        {
-            class: "button-style button-edit",
-            "data-testid": "bookItemEditButton",
-        },
-        "Edit Buku"
-    );
+    const deleteIcon = createElement("i", {
+        class: "fas fa-trash",
+    });
+    const deleteButton = createElement("div", {
+        class: "button-style button-delete",
+        "data-testid": "bookItemDeleteButton",
+    });
+    deleteButton.appendChild(deleteIcon);
+    deleteButton.appendChild(document.createTextNode(" Hapus"));
+
+    const editIcon = createElement("i", {
+        class: "fas fa-edit",
+    });
+    const editButton = createElement("div", {
+        class: "button-style button-edit",
+        "data-testid": "bookItemEditButton",
+    });
+    editButton.appendChild(editIcon);
+    editButton.appendChild(document.createTextNode(" Edit"));
 
     const buttonContainer = createElement(
         "div",
@@ -275,9 +290,8 @@ const displayBooks = (bookObject) => {
             "data-testid": "bookItem",
             class: "book-item",
         },
-        bookItemTitle,
-        bookItemAuthor,
-        bookItemYear,
+        bookImage,
+        bookContentContainer,
         buttonContainer
     );
 
@@ -291,7 +305,6 @@ const displayBooks = (bookObject) => {
     return bookContainer;
 };
 
-
 /* Kriteria Wajib 4: Dapat Memindahkan Buku Antar Rak */
 const moveBooks = (bookId, isComplete) => {
     const bookTarget = findBook(bookId);
@@ -301,7 +314,6 @@ const moveBooks = (bookId, isComplete) => {
     document.dispatchEvent(new Event(RENDER_EVENT));
     saveData();
 };
-
 
 /* Kriteria Wajib 5: Dapat Menghapus Data Buku */
 const deleteBook = (bookId) => {
@@ -339,7 +351,6 @@ const deleteBook = (bookId) => {
     );
 };
 
-
 /* Kriteria Opsional 1: Menambahkan Fitur Pencarian Buku */
 const searchBook = (event) => {
     event.preventDefault();
@@ -367,7 +378,6 @@ const searchBook = (event) => {
             : incompleteBookList.appendChild(bookElement);
     });
 };
-
 
 /* Kriteria Opsional 2: Menambahkan Fitur Edit Buku */
 const editBook = (bookId) => {
@@ -420,7 +430,7 @@ const editBook = (bookId) => {
                 title: "Anda ingin menyimpan perubahan?",
                 showDenyButton: true,
                 confirmButtonText: "Simpan",
-                denyButtonText: `Tidak`,
+                denyButtonText: "Tidak",
             },
             () => {
                 showAlert({
@@ -442,7 +452,7 @@ const editBook = (bookId) => {
     });
 };
 
-// Event listener
+/* Event listener */
 document.addEventListener("click", (event) => {
     if (event.target.classList.contains(SELECTORS.closeModal)) {
         closeModal();
@@ -482,13 +492,13 @@ document.addEventListener("DOMContentLoaded", () => {
     );
     const searchBookForm = document.getElementById(SELECTORS.searchBook);
 
-    // Event listener to show add book modal
+    // Event listener untuk menampilkan modal
     addBookButton.addEventListener("click", () => {
         addBookModal.classList.add("show");
         modalOverlay.classList.add("show");
     });
 
-    // Event listener to hide modal when overlay is clicked
+    // Event listener untuk menyembunyikan modal
     modalOverlay.addEventListener("click", () => {
         if (addBookModal.classList.contains("show")) {
             addBookModal.classList.remove("show");
@@ -496,18 +506,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Event listener to close modal
+    // Event listener untuk menutup modal
     closeModalButton.addEventListener("click", () => {
         addBookModal.classList.remove("show");
         modalOverlay.classList.remove("show");
         editBookContainer.classList.remove("active");
     });
 
-    // Event listener for title input
+    // Event listener untuk setiap input field
     titleInput.addEventListener("focus", () => validateTitleInput(titleInput));
     titleInput.addEventListener("input", () => validateTitleInput(titleInput));
 
-    // Event listener for author input
     authorInput.addEventListener("focus", () =>
         validateAuthorInput(authorInput)
     );
@@ -515,11 +524,10 @@ document.addEventListener("DOMContentLoaded", () => {
         validateAuthorInput(authorInput)
     );
 
-    // Event listener for year input
     yearInput.addEventListener("focus", () => validateYearInput(yearInput));
     yearInput.addEventListener("input", () => validateYearInput(yearInput));
 
-    // Event listener to handle form submission
+    // Event listener untuk menangani submit
     submitForm.addEventListener("submit", (event) => {
         event.preventDefault();
 
@@ -532,21 +540,32 @@ document.addEventListener("DOMContentLoaded", () => {
         addBook();
         submitForm.reset();
 
-        // Close the modal after submitting the book
         addBookModal.classList.remove("show");
         modalOverlay.classList.remove("show");
     });
 
-    // Load data from storage if available
     if (isStorageExist()) {
         loadDataFromStorage();
     }
 
-    // Event listener to handle book search
+    // Event listener untuk menangani pencarian buku
     searchBookForm.addEventListener("submit", searchBook);
+});
 
-    // Remove later: log saved data
-    document.addEventListener(SAVED_EVENT, () => {
-        console.log(localStorage.getItem(STORAGE_KEY));
-    });
+// Sticky Navigation Menu JS Code
+document.addEventListener("DOMContentLoaded", function () {
+    let header = document.querySelector("header");
+    let scrollBtn = document.querySelector(".scroll-button a");
+    console.log(scrollBtn);
+    let val;
+
+    window.onscroll = function () {
+        if (document.documentElement.scrollTop > 150) {
+            header.classList.add("sticky");
+            scrollBtn.style.display = "block";
+        } else {
+            header.classList.remove("sticky");
+            scrollBtn.style.display = "none";
+        }
+    };
 });
