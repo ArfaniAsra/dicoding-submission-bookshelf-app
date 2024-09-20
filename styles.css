@@ -536,6 +536,29 @@ main {
 .button-edit:hover {
     background-color: var(--button-color-edit-hover);
 }
+
+/* Footer */
+footer {
+    width: 100%;
+    background-color: var(--secondary-color);
+    padding: 20px 0;
+    text-align: center;
+    /* border-top: 1px solid #e9ecef; */
+    margin-top: 20px;
+    text-align: center;
+}
+
+footer .text, footer .text a {
+    font-size: var(--font-size-base);
+    color: var(--text-color-light);
+}
+
+footer .text a {
+    text-decoration: underline;
+}
+
+/* End of Footer */
+
 /* End of Main */
 
 /* Style for the modal form (popup) */
@@ -654,7 +677,9 @@ main {
         width: 95%;
     }
     .book-list-container {
-        grid-template-columns: repeat(2, 1fr);
+        display: flex;
+        flex-direction: column;
+        width: 100%;
     }
     .book-item {
         flex: 0 1 calc(50% - 25px);
