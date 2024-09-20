@@ -21,5 +21,5 @@
 ### Opsional
 1. **searchBook()** ✅
 2. **editBook()** ✅
-3. **Clean code**
-4. **Styling CSS**
+3. **Clean code** ✅
+4. **Styling CSS** ✅
